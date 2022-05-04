@@ -11,20 +11,22 @@ license: MIT
 from datetime import datetime
 import logging
 import cv2
-from threading import Thread
 import os
 import sys
 import configparser
 
 
-class ObjectDetector(Thread):
+class ObjectDetector():
     """Object detector class that detects players and returns bounding boxes
-
-    Inherits:
-        Thread (Class): Threading class.
     """
     def __init__(self, cfg_file=None, logger=None, debug=False):
-        
+        """_summary_
+
+        Args:
+            cfg_file (cfg, optional): The Config file for the neural network. Defaults to None.
+            logger (Logger, optional): Logger. Either giver or created by class. Defaults to None.
+            debug (bool, optional): Debug mode logs additional information. Defaults to False.
+        """
         # Create variables
         if cfg_file == None:
             self.cfg_file = os.getcwd() + "./cfg/object_detection.cfg"
@@ -58,6 +60,9 @@ class ObjectDetector(Thread):
             self.logger.addHandler(file_handler)
         else: 
             self.logger = logger
+
+        self.factorheight = None
+        self.factorwidth = None
 
         # Loading neural network
         self.logger.info("Loading CNN...")
@@ -104,68 +109,62 @@ class ObjectDetector(Thread):
         """
         self.logger.info("convertNpimgToDnimg: Converting numpy image darknet image...")
         # Convert image to RGB if necessary
-        numpyimage = cv2.cvtColor(numpyimage, cv2.COLOR_BGR2RGB)
+        image = cv2.cvtColor(numpyimage, cv2.COLOR_BGR2RGB)
         # Resize the image to the network size
-        numpyimage = cv2.resize(numpyimage, (self.width, self.height),
+        imageresized = cv2.resize(numpyimage, (self.width, self.height),
                                 interpolation=cv2.INTER_LINEAR)
+        # Safe factors for reconversion
+        heightresized, widthresized, c = imageresized.shape
+        heightoriginal, widthoriginal, c = image.shape
+        self.factorheight = (heightoriginal/heightresized)
+        self.factorwidth = (widthoriginal/widthresized)
         # Copy resized image to darknetimage
-        self.darknet.copy_image_from_bytes(self.darknet_image, numpyimage.tobytes())
+        self.darknet.copy_image_from_bytes(self.darknet_image, imageresized.tobytes())
         self.logger.info("convertNpimgToDnimg: done")
         return self.darknetimage
-
-    def detectplayers(self, thresh:float=0.5):
-        """Runs the detection on the darknet image.
-
-        Args:
-            thresh (float, optional): Defines the confidence threshhold. Defaults to 0.5.
-
-        Returns:
-            array: Detected bounding boxes
-        """
-        # run image detection
-        self.logger.info("detectplayers: Running Object detection...")
-        # Run the detection on darknet
-        detections = self.darknet.detect_image(self.network, self.class_names, self.darknet_image, thresh=thresh)
-        # free the darknet image
-        self.darknet.free_image(self.darknet_image)
-        self.logger.info("detectplayers: done")
-        return detections
 
     def resizeDetectionsToOriginalSize(self, detections):
         """Resize the detected bounding boxes from net size to original size.
 
         Args:
-            detections (array): Detected bounding boxes from cnn
+            detections (list): Detected bounding boxes from cnn
 
         Returns:
-            array: Detected bounding boxes resized to original size
+            list: Detected bounding boxes resized to original size
         """
         self.logger.info("resizeDetectionsToOriginalSize: Resizing detections...")
         # reshape bounding boxes to original image
-        h, w, c = image_resized.shape
-        h1, w1, c = image.shape
-        h = (h1/h)
-        w = (w1/w)
-
-        # TODO: make loop to convert them to original size
-
+        for i in range(0, len(detections)):
+            (x, y, w, h) = detections[i]
+            self.logger.debug(f"resizeDetectionsToOriginalSize: bbox: {detections[i]}")
+            detections[i] = (self.factorwidth*x), (self.factorheight*y), (self.factorwidth*w), (self.factorheight*h)
+            self.logger.debug(f"resizeDetectionsToOriginalSize: bbox: {detections[i]}")
         self.logger.info("resizeDetectionsToOriginalSize: done")
         return detections
 
-    def run(self):
+    def detectplayers(self, frame, thresh:float=0.5):
         """Runs the Yolov4 cnn and returns the detected bounding boxes.
 
         Args:
-            image (image): The image in which objects are to be detected.
+            frame (image): The image in which objects are to be detected.
             thresh (float, optional): The confidence threshhold. Defaults to 0.5.
 
         Returns:
             image: Image with detected players.
             array: Array of detected bounding boxes.
         """
-
+        # run image detection
+        self.logger.info("detectplayers: Running Object detection...")
+        # Resize image to network size 
+        self.convertNpimgToDnimg(frame)
+        # Run the detection on darknet
+        detections = self.darknet.detect_image(self.network, self.class_names, self.darknet_image, thresh=thresh)
         # insert boundingboxes into image
         if self.debug:
-            image = self.darknet.draw_boxes(detections, image, self.class_colors)
-      
-        return image, detections
+            frame = self.darknet.draw_boxes(detections, frame, self.class_colors)
+        # Resize the bounding boxes
+        detections = self.resizeDetectionsToOriginalSize(detections)
+        # free the darknet image
+        self.darknet.free_image(self.darknet_image)
+        self.logger.info("detectplayers: done")
+        return detections, frame

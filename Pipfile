@@ -5,6 +5,10 @@ name = "pypi"
 
 [packages]
 pywin32 = "*"
+numpy = "*"
+pyautogui = "*"
+configparser = "*"
+argparse = "*"
 
 [dev-packages]
 
