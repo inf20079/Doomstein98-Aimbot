@@ -10,7 +10,7 @@ license: MIT
 
 import argparse
 import logging
-import datetime
+from datetime import datetime
 import modules.aimbot
 import modules.object_detector
 from time import sleep

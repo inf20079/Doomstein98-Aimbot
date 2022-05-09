@@ -9,6 +9,7 @@ numpy = "*"
 pyautogui = "*"
 configparser = "*"
 argparse = "*"
+opencv-python = "*"
 
 [dev-packages]
 
