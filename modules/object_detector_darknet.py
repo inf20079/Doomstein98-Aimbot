@@ -52,7 +52,7 @@ class ObjectDetector():
             # create formatter
             formatter = logging.Formatter('%(asctime)s | %(name)s | %(levelname)s | %(message)s')
             # logging file name
-            name = f'./log/object_detection{datetime.now()}.log'
+            name = f'./log/object_detection.log'
             # Logging file handler
             file_handler = logging.FileHandler(name)
             file_handler.setFormatter(formatter)
