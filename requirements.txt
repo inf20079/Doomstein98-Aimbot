@@ -12,3 +12,4 @@ PyRect==0.2.0
 PyScreeze==0.1.28      
 pytweening==1.0.4
 pywin32==304
+Pillow==9.1.1

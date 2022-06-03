@@ -11,6 +11,7 @@ configparser = "*"
 argparse = "*"
 opencv-python = "*"
 keyboard = "*"
+pillow = "*"
 
 [dev-packages]
 

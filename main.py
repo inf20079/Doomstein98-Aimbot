@@ -16,6 +16,7 @@ from time import sleep
 from sys import stdout
 import keyboard
 from cv2 import destroyAllWindows
+from os import mkdir
 
 def parseArgs():
     """ Parses input arguments and saves them into a dict.
@@ -107,7 +108,11 @@ def create_logger(logging_level, debug = False):
     # logging file name
     name = './log/central_log.log'
     # Logging file handler
-    file_handler = logging.FileHandler(filename=name, mode="a+")
+    try:
+        file_handler = logging.FileHandler(filename=name, mode="a+")
+    except:
+        mkdir("./log")
+        file_handler = logging.FileHandler(filename=name, mode="a+")
     file_handler.setFormatter(formatter)
     # Console handler
     console_handler = logging.StreamHandler(stdout)
