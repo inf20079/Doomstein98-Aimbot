@@ -86,6 +86,9 @@ class Aimbot():
         Test:
             Create testwindow of specific size with f.e. opencv in top left corner of the desktop. Manually calculate region. Assert if the result of the function is equal.
             only test transormation from xyvz to xywh
+
+        Sources:
+            see [1]
         """
         self.logger.info("getWindowPosition: Getting window and xywh-pixels...")
         # Search window by name and get hWnd number
@@ -114,6 +117,9 @@ class Aimbot():
         Tests:
             Use a test window as before screenshot and assert if frame exists.
             Check for frame format. F.e. is height and width none.
+        
+        Sources:
+            see [1]
         """
         self.logger.info("getScreenshotOfWindow: Screenshotting frame...")
         # Screenshots the area defined ba region (xywh)
@@ -143,6 +149,9 @@ class Aimbot():
             - Many close boxes to the center --> shoud result in closest box to the center
             - A box over the center --> shoud result in closest box to the center
             - Many far away boxes --> shoud result in closest box to the center
+
+        Sources:
+            see [1]
         """
         self.logger.info("calculatePositionOfClosestPlayer: Searching closest bounding box to crosshair...")
         # Set first bbox as closest
@@ -184,6 +193,9 @@ class Aimbot():
             - Move mouse out of desktop
             - Move mouse to non existent pixels
             - Move mouse to two points and assert if distance quals the manually calculated distance
+
+        Sources:
+            see [1]
         """
         self.logger.info(f"moveMouseAndShoot: Move mouse to {xwindow+x}, {ywindow+y} and press...")
         # Move mouse to x,y-pixel

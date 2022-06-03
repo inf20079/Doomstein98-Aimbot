@@ -124,6 +124,8 @@ def create_logger(logging_level, debug = False):
 
 
 def main():
+    """Contains the main logic.
+    """
     # Get input arguments
     args = parseArgs()
 

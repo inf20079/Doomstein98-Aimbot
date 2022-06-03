@@ -8,12 +8,10 @@ license: MIT
 
 """
 
-from datetime import datetime
 import logging
 import cv2
 import numpy as np
 import os
-import sys
 import configparser
 
 
@@ -21,7 +19,7 @@ class ObjectDetector():
     """Object detector class that detects players and returns bounding boxes
     """
     def __init__(self, cfg_file=None, logger=None, debug=False):
-        """_summary_
+        """Initializes the ObjectDetector. Loads CNN.
 
         Args:
             cfg_file (cfg, optional): The Config file for the neural network. Defaults to None.
@@ -34,6 +32,9 @@ class ObjectDetector():
             Scenarios:
             - use correct config file
             - use wrong config file (file format or missing parameters)
+
+        Sources:
+            see [2]
         """
         # Create variables
         if cfg_file == None:
@@ -127,6 +128,9 @@ class ObjectDetector():
             - test image in blob and assert equals with predefined blob
             - try to convert a corrupt image and assert false
             - try to convert different frame formats to blob and assert if conversion successful
+        
+        Sources:
+            see [2]
         """
         self.logger.info("convertimgToBlob: Converting numpy image darknet image...")
         # save original image for later use 
@@ -158,6 +162,9 @@ class ObjectDetector():
             Scenarios:
             - Correct content --> assert true
             - False content --> assert false
+
+        Source:
+            see [2]
         """
         self.logger.info("resizeDetectionsToOriginalSize: Resizing detections...")
         # reshape bounding boxes to original image
@@ -206,6 +213,9 @@ class ObjectDetector():
             Scenarios:
             - define set of boxes very close with the same label --> should be merged
             - define set of boxes very close with different labels --> should not be merged
+
+        Source:
+            see [2]
         """
         # remove converging bounding boxes
         self.logger.info(f"mergeConvergingBoxes: Removing converging boxes...")
@@ -222,7 +232,7 @@ class ObjectDetector():
 
             if self.debug == False: continue
             
-            # Draw bpunding boxes on image for debug purposes
+            # Draw bounding boxes on image for debug purposes
             # Compute top left corner
             x = int(nonconvergingboxes[count][2][0] - nonconvergingboxes[count][2][2] / 2)
             y = int(nonconvergingboxes[count][2][1] - nonconvergingboxes[count][2][3] /2)

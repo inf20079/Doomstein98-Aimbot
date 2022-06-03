@@ -1,6 +1,6 @@
 # Doomstein98-Aimbot
 Python project 4. semester. Aimbot for the multiplayer shooter "Doomstein98". It works by capturing a image of a browser window via pysimplegui. Then a yolov3 neural network detects the players in the image. Now the player closest to the middle of the window (usually where the crosshair is placed) is determined. Following this the mouse will be moved to the closest player and the left mouse button will be clicked (to shoot the player). 
-At this state the code is fully working but i have not trained a custom version of the yolov3 net, so to test the code we will use a video which will show the full functionality of the code. More on that under demo.
+At this state the code is fully working but i have not trained a custom version of the yolov3 net, so to test the code we will use a video which will show the full functionality of the code. More on that under demo. Training a custom model would exceed the given timeframe but will be done in the future.
 
 ## Requirements
 For the CNN we will need a pretrained .weights file and a config file. You can use your own configuration or download files from <a href=https://pjreddie.com/darknet/yolo/>pjreddie.com</a>.
@@ -89,6 +89,11 @@ Because at this moment the player models will not be detected by the trained ver
 1. Open this <a href=https://www.youtube.com/shorts/tB-0oWBuK7A>video</a> on youtube
 2. Start the script as described under usage. Without any parameters except the FOVOFFSET as explained earlier
 3. Switch to the chrome tab to start the script. 
+
+## Sources
+While most of the code is self written the basic concept is inspired by the following sources. Code which is inspired by the following sources is marked in the docstring.<br>
+[1] https://github.com/monokim/AIMBOT-YOLO/blob/master/aimbot.py - Basic concept <br>
+[2] https://pysource.com/2019/06/27/yolo-object-detection-using-opencv-with-python/ - object detection with opencv<br>
 
 
 
